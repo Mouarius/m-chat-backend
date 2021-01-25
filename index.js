@@ -2,6 +2,7 @@ const http = require("http")
 const express = require("express")
 const socketio = require("socket.io")
 const cors = require("cors")
+const loginRouter = require("./controllers/login")
 
 const PORT = 8000
 
@@ -17,6 +18,7 @@ const io = socketio(server, {
   },
 })
 
+app.use(express.json())
 app.use(cors())
 
 io.on("connection", (socket) => {
@@ -34,6 +36,8 @@ io.on("connection", (socket) => {
     console.log("A user has disconnected")
   })
 })
+
+app.use("/api/login", loginRouter)
 
 app.get("/", (req, res) => {
   res.send("Hello World from server !")

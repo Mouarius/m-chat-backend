@@ -4,7 +4,7 @@ const socketio = require("socket.io")
 const cors = require("cors")
 const loginRouter = require("./controllers/login")
 
-const PORT = 8000
+const PORT = process.env.PORT || 8000
 
 const generateID = () => Math.floor(Math.random() * 1000)
 

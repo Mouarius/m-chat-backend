@@ -20,6 +20,7 @@ const io = socketio(server, {
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static("build"))
 
 io.on("connection", (socket) => {
   console.log("A user has connected")

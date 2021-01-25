@@ -18,9 +18,9 @@ const io = socketio(server, {
   },
 })
 
+app.use(express.static("build"))
 app.use(express.json())
 app.use(cors())
-app.use(express.static("build"))
 
 io.on("connection", (socket) => {
   console.log("A user has connected")
@@ -40,9 +40,9 @@ io.on("connection", (socket) => {
 
 app.use("/api/login", loginRouter)
 
-app.get("/", (req, res) => {
-  res.send("Hello World from server !")
-})
+// app.get("/", (req, res) => {
+//   res.send("Hello World from server !")
+// })
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema({
   socketID: {
     type: String,
   },
+  colorTag: {
+    type: String,
+  },
 })
 
 const User = new mongoose.model("User", userSchema)

@@ -48,10 +48,15 @@ io.on("connection", (socket) => {
 
   socket.on("login", (data) => {
     console.log("We have a new logged in user : ", data)
-    userObject = { username: data.username, socketID: socket.id }
+    userObject = {
+      username: data.username,
+      socketID: socket.id,
+      colorTag: data.color,
+    }
     const newUser = new User(userObject)
     newUser.save()
     io.emit("logged user", newUser)
+    socket.emit("login success", newUser)
   })
 
   socket.on("send message", (message) => {
@@ -63,6 +68,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", async () => {
     console.log("A user has disconnected")
     await User.deleteMany({ username: userObject.username })
+    io.emit("user quit")
   })
 })
 app.use("/api/login", loginRouter)

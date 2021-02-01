@@ -8,6 +8,9 @@ const userRouter = require("./controllers/users")
 const colorsRouter = require("./controllers/colors")
 const config = require("./util/config")
 
+const Message = require("./models/message")
+const User = require("./models/user")
+
 const generateID = () => Math.floor(Math.random() * 1000)
 
 const app = express()
@@ -41,8 +44,15 @@ app.use(cors())
 
 io.on("connection", (socket) => {
   console.log("A user has connected")
+  let userObject
 
-  socket.emit("connected", socket.id)
+  socket.on("login", (data) => {
+    console.log("We have a new logged in user : ", data)
+    userObject = { username: data.username, socketID: socket.id }
+    const newUser = new User(userObject)
+    newUser.save()
+    io.emit("logged user", newUser)
+  })
 
   socket.on("send message", (message) => {
     const id = generateID()
@@ -50,11 +60,11 @@ io.on("connection", (socket) => {
     console.log(message)
   })
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("A user has disconnected")
+    await User.deleteMany({ username: userObject.username })
   })
 })
-
 app.use("/api/login", loginRouter)
 app.use("/api/users", userRouter)
 app.use("/api/colors", colorsRouter)

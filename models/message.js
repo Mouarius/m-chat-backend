@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema({
   },
 })
 
-const Message = new mongoose.model("Blog", messageSchema)
+const Message = new mongoose.model("Message", messageSchema)
 
 messageSchema.set("toJSON", {
   transform: (document, returnedObject) => {

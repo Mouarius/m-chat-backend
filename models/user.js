@@ -5,9 +5,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  messages: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
+  socketID: {
+    type: String,
+  },
 })
 
-const User = new mongoose.model("Blog", userSchema)
+const User = new mongoose.model("User", userSchema)
 
 userSchema.set("toJSON", {
   transform: (document, returnedObject) => {

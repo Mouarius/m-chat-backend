@@ -2,9 +2,11 @@ const http = require("http")
 const express = require("express")
 const socketio = require("socket.io")
 const cors = require("cors")
+const mongoose = require("mongoose")
 const loginRouter = require("./controllers/login")
-
-const PORT = process.env.PORT || 8000
+const userRouter = require("./controllers/users")
+const colorsRouter = require("./controllers/colors")
+const config = require("./util/config")
 
 const generateID = () => Math.floor(Math.random() * 1000)
 
@@ -18,8 +20,23 @@ const io = socketio(server, {
   },
 })
 
-app.use(express.static("build"))
+console.log("Connecting to MongoDB...")
+mongoose
+  .connect(config.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log("connected to MongoDB")
+  })
+  .catch((error) => {
+    console.error("error connecting to MongoDB:", error.message)
+  })
+
 app.use(express.json())
+app.use(express.static("build"))
 app.use(cors())
 
 io.on("connection", (socket) => {
@@ -39,11 +56,13 @@ io.on("connection", (socket) => {
 })
 
 app.use("/api/login", loginRouter)
+app.use("/api/users", userRouter)
+app.use("/api/colors", colorsRouter)
 
-// app.get("/", (req, res) => {
-//   res.send("Hello World from server !")
-// })
+app.get("/", (req, res) => {
+  res.send("Hello World from server !")
+})
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+server.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })
